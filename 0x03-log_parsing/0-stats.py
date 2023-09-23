@@ -1,40 +1,48 @@
 #!/usr/bin/python3
-"""This module reads stdin line by line and computes metrics"""
+"""
+module contains a script that reads stdin line by line and computes metrics
+"""
 import sys
 
-possible_status_codes = [200, 301, 400, 401, 403, 404, 405, 500]
-lines_read = 0
-status_codes_map = {}
-total_file_size = 0
+
+status_codes = {
+    "200": 0,
+    "301": 0,
+    "400": 0,
+    "401": 0,
+    "403": 0,
+    "404": 0,
+    "405": 0,
+    "500": 0
+}
+
+file_size = 0
 
 
-def print_stats():
-    """prints out the statistics"""
-    print("File size: {}".format(total_file_size))
-    for status, count in sorted(status_codes_map.items()):
-        print("{}: {}".format(status, count))
+def print_metrics():
+    """prints of the logs"""
+    print("File size: {}".format(file_size))
+    for status in sorted(status_codes.keys()):
+        if status_codes[status]:
+            print("{}: {}".format(status, status_codes[status]))
 
 
-try:
-    for line in sys.stdin:
-        line_tokens = line.split()
-        try:
-            file_size = int(line_tokens[-1])
-            total_file_size += file_size
-            status_code = int(line_tokens[-2])
-            if status_code in possible_status_codes:
-                if status_code in status_codes_map:
-                    status_codes_map[status_code] += 1
-                else:
-                    status_codes_map[status_code] = 1
-        except ValueError:
-            pass
-        lines_read += 1
-        if lines_read % 10 == 0:
-            print_stats()
-
-    if (lines_read == 0) or (lines_read % 10 != 0):
-        print_stats()
-
-except (KeyboardInterrupt):
-    print_stats()
+if __name__ == "__main__":
+    count = 0
+    try:
+        for line in sys.stdin:
+            try:
+                elems = line.split()
+                file_size += int(elems[-1])
+                if elems[-2] in status_codes:
+                    status_codes[elems[-2]] += 1
+            except Exception:
+                pass
+            if count == 9:
+                print_metrics()
+                count = -1
+            count += 1
+    except KeyboardInterrupt:
+        print_metrics()
+        raise
+    print_metrics()
