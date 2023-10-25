@@ -17,7 +17,7 @@ def makeChange(coins, total):
             break
         elif coin <= total:
             remainder = total % coin
-            coin_count += int(total / coin)
+            coin_count += total // coin
             total = remainder
 
     return coin_count if total == 0 else -1
