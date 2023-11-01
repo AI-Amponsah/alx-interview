@@ -1,4 +1,5 @@
 #!/usr/bin/node
+
 /**
  * a script that prints all characters of a Star Wars movie
  * use star wars api
