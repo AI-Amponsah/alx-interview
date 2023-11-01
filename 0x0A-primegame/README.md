@@ -1,2 +1,3 @@
-#0x22. Prime Game
+# Prime Game
 
+This project contains interview coding challenges.

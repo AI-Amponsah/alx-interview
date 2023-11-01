@@ -1,53 +1,37 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
+'''Write a script that reads stdin line by line and then computes metrics'''
+
 
 import sys
-import signal
 
-# Initialize variables
-total_file_size = 0
-status_codes_count = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
-line_count = 0
-
-
-def print_statistics():
-    print(f'Total file size: File size: {total_file_size}')
-    for status_code in sorted(status_codes_count):
-        if status_codes_count[status_code] > 0:
-            print(f'{status_code}: {status_codes_count[status_code]}')
-
-
-# Handle keyboard interruption (CTRL + C)
-def signal_handler(sig, frame):
-    print_statistics()
-    sys.exit(0)
-
-
-signal.signal(signal.SIGINT, signal_handler)
+cache = {'200': 0, '301': 0, '400': 0, '401': 0,
+         '403': 0, '404': 0, '405': 0, '500': 0}
+total_size = 0
+counter = 0
 
 try:
     for line in sys.stdin:
-        line_count += 1
+        line_list = line.split(" ")
+        if len(line_list) > 4:
+            code = line_list[-2]
+            size = int(line_list[-1])
+            if code in cache.keys():
+                cache[code] += 1
+            total_size += size
+            counter += 1
 
-        # Parse the input line
-        try:
-            parts = line.split()
-            file_size = int(parts[-1])
-            status_code = int(parts[-2])
+        if counter == 10:
+            counter = 0
+            print('File size: {}'.format(total_size))
+            for key, value in sorted(cache.items()):
+                if value != 0:
+                    print('{}: {}'.format(key, value))
 
-            # Check if the line matches the expected format
-            if len(parts) >= 7 and parts[5] == '"GET' and parts[6].startswith('/projects/260'):
-                total_file_size += file_size
-                status_codes_count[status_code] += 1
+except Exception as err:
+    pass
 
-        except (ValueError, IndexError):
-            # Skip lines with incorrect format
-            continue
-
-        # Print statistics after every 10 lines
-        if line_count % 10 == 0:
-            print_statistics()
-
-except KeyboardInterrupt:
-    # Print final statistics on keyboard interruption
-    print_statistics()
-    sys.exit(0)
+finally:
+    print('File size: {}'.format(total_size))
+    for key, value in sorted(cache.items()):
+        if value != 0:
+            print('{}: {}'.format(key, value))
