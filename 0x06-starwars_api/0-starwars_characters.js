@@ -18,7 +18,7 @@ request(url + argument, (error, response, body) => {
   }
 });
 
-function orderPrinter (chars, n) {
+function orderPrinter(chars, n) {
   if (n === chars.length) { return; }
   request(chars[n], (error, response, body) => {
     if (!error) {
