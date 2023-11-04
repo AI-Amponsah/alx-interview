@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-'''a script that reads stdin line by line and computes metrics'''
+'''Write a script that reads stdin line by line and then computes metrics'''
 
 
 import sys
@@ -35,3 +35,4 @@ finally:
     for key, value in sorted(cache.items()):
         if value != 0:
             print('{}: {}'.format(key, value))
+            
